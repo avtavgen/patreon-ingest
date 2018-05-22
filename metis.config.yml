@@ -1,0 +1,7 @@
+project_token: 50f77d0af9515ba9d5d71972
+name: patreon-social-ingest
+jobs: 
+  - job_id: 82f173e8-40be-4d8c-b852-c74c2d9d381c
+    language: python
+    name: Main
+    entrypoint: "main.py"
