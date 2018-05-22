@@ -39,7 +39,7 @@ class ParteonProcessor(object):
 
     def _get_users(self):
         self.info = []
-        response = self._make_request(self.base_url + "api/explore/category/99?include=creator.null&"
+        response = self._make_request(self.base_url + "api/explore/category/1?include=creator.null&"
                                                       "fields[user]=full_name%2Cimage_url"
                                                       "%2Curl&fields[campaign]=creation_name"
                                                       "%2Cpatron_count%2Cpledge_sum%2Cis_monthly%2Cearnings_visibility&"
@@ -51,6 +51,7 @@ class ParteonProcessor(object):
                 self.info.append(user_data)
                 sleep(randint(4, 10))
             except:
+                self.log.info("Failed to fetch creator: {}".format(creator))
                 continue
         self.entity.save(users=self.info)
 
