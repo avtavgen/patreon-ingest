@@ -60,9 +60,9 @@ class ParteonProcessor(object):
         user_id = creator["id"]
         user_data["patrons"] = creator["attributes"]["patron_count"]
         try:
-            user_data["amount"] = creator["attributes"]["pledge_sum"]
+            user_data["monthly_cents"] = creator["attributes"]["pledge_sum"]
         except KeyError:
-            user_data["amount"] = None
+            user_data["monthly_cents"] = None
 
         user_info = self._make_request(url)
         user_data["name"] = user_info["data"]["attributes"]["full_name"]

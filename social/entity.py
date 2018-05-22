@@ -24,7 +24,7 @@ class SocialStatements:
             "name": "text",
             "patrons": "int",
             "featured_tags": "text",
-            "amount_a_month": "int"
+            "monthly_cents": "int"
         }
     }
 
