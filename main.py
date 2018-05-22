@@ -1,7 +1,7 @@
-import skafossdk as Skafos
 from social.entity import SocialStatements
 from patreon.patreon_proccessor import ParteonProcessor
 from helpers.logger import get_logger
+from skafossdk import *
 
 
 # Initialize the skafos sdk
