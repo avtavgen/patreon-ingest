@@ -16,7 +16,7 @@ class SocialStatements:
         self.logger = logger
 
     user_schema = {
-        "table_name": "patreon_user_info",
+        "table_name": "user_info",
         "options": {
             "primary_key": ["name"],
         },
