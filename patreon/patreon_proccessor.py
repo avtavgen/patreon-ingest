@@ -96,7 +96,7 @@ class ParteonProcessor(object):
             if is_featured:
                 tag = "{} {} posts".format(t["attributes"]["value"], t["attributes"]["cardinality"])
                 tags.append(tag)
-        return ",".join(tags)
+        return tags
 
     def _get_post_count(self, relation_id):
         response = self._make_request("{}api/stream?page[cursor]=null&filter[is_by_creator]=true"
