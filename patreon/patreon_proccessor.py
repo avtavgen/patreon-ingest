@@ -41,7 +41,7 @@ class ParteonProcessor(object):
                                                       "fields[user]=full_name%2Cimage_url"
                                                       "%2Curl&fields[campaign]=creation_name"
                                                       "%2Cpatron_count%2Cpledge_sum%2Cis_monthly%2Cearnings_visibility&"
-                                                      "page[count]=50&json-api-version=1.0")
+                                                      "page[count]=10&json-api-version=1.0")
         creators_list = response["data"]
         for creator in creators_list:
             try:
@@ -65,7 +65,7 @@ class ParteonProcessor(object):
         user_data["followers"] = creator["attributes"]["patron_count"]
         description = creator["attributes"]["creation_name"]
         user_data["profile"] = "creating {}".format(description)
-        user_data["date"] = datetime.now().date()
+        user_data["date"] = datetime.now().strftime("%Y-%m-%d")
         try:
             user_data["platform_income"] = creator["attributes"]["pledge_sum"]
         except KeyError:
