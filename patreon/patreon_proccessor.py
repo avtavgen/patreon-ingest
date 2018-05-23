@@ -35,25 +35,30 @@ class ParteonProcessor(object):
                     sys.exit("Max retries reached")
 
     def _get_users(self):
-        self.info = []
-        self.relations = []
-        response = self._make_request(self.base_url + "api/explore/category/99?include=creator.null&"
-                                                      "fields[user]=full_name%2Cimage_url%2Curl&"
-                                                      "fields[campaign]=creation_name"
-                                                      "%2Cpatron_count%2Cpledge_sum%2Cis_monthly%2Cearnings_visibility&"
-                                                      "page[count]=1000&json-api-version=1.0")
-        creators_list = response["data"]
-        for creator in creators_list:
-            try:
-                user_data, relations = self._get_user_info(creator)
-                self.info.append(user_data)
-                for relation in relations:
-                    self.relations.append(relation)
-                sleep(randint(4, 10))
-            except Exception as e:
-                self.log.info("Failed to fetch creator: {}".format(e))
-                continue
-        self.entity.save(users=self.info, relations=self.relations)
+        categories_list = list(range(0, 17))
+        categories_list.append(99)
+        for category in categories_list:
+            self.info = []
+            self.relations = []
+            response = self._make_request(self.base_url + "api/explore/category/{}?include=creator.null&"
+                                                          "fields[user]=full_name%2Cimage_url%2Curl&"
+                                                          "fields[campaign]=creation_name%2C"
+                                                          "patron_count%2Cpledge_sum%2C"
+                                                          "is_monthly%2Cearnings_visibility&"
+                                                          "page[count]=100&json-api-version=1.0".format(category))
+            creators_list = response["data"]
+            self.log.info("Collecting {} creators form {} category".format(len(creators_list), category))
+            for creator in creators_list:
+                try:
+                    user_data, relations = self._get_user_info(creator)
+                    self.info.append(user_data)
+                    for relation in relations:
+                        self.relations.append(relation)
+                    sleep(randint(4, 10))
+                except Exception as e:
+                    self.log.info("Failed to fetch creator: {}".format(e))
+                    continue
+            self.entity.save(users=self.info, relations=self.relations)
 
     def _get_user_info(self, creator):
         user_data = dict()
