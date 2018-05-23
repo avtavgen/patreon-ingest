@@ -38,10 +38,10 @@ class ParteonProcessor(object):
         self.info = []
         self.relations = []
         response = self._make_request(self.base_url + "api/explore/category/99?include=creator.null&"
-                                                      "fields[user]=full_name%2Cimage_url"
-                                                      "%2Curl&fields[campaign]=creation_name"
+                                                      "fields[user]=full_name%2Cimage_url%2Curl&"
+                                                      "fields[campaign]=creation_name"
                                                       "%2Cpatron_count%2Cpledge_sum%2Cis_monthly%2Cearnings_visibility&"
-                                                      "page[count]=10&json-api-version=1.0")
+                                                      "page[count]=1000&json-api-version=1.0")
         creators_list = response["data"]
         for creator in creators_list:
             try:
@@ -130,11 +130,12 @@ class ParteonProcessor(object):
 
         if facebook_url:
             screen_name = self._get_url_screen_name(facebook_url)
-            facebook_relation["src"] = src_uri
-            facebook_relation["relation"] = 4
-            facebook_relation["ingested"] = False
-            facebook_relation["dst"] = "facebook␟page␟{}".format(screen_name)
-            relations.append(facebook_relation)
+            if not screen_name.isdigit():
+                facebook_relation["src"] = src_uri
+                facebook_relation["relation"] = 4
+                facebook_relation["ingested"] = False
+                facebook_relation["dst"] = "facebook␟page␟{}".format(screen_name)
+                relations.append(facebook_relation)
 
         if twitch_url:
             twitch_relation["src"] = src_uri
@@ -154,7 +155,10 @@ class ParteonProcessor(object):
 
         if youtube_url:
             name = self._get_url_screen_name(youtube_url)
-            uri = "youtube␟{}␟{}".format("channel" if "channel" in youtube_url else "user", name)
+            if "channel" in youtube_url and self._check_youtube_url(youtube_url):
+                uri = "youtube␟{}␟{}".format("user", name)
+            else:
+                uri = "youtube␟{}␟{}".format("channel" if "channel" in youtube_url else "user", name)
             youtube_relation["src"] = src_uri
             youtube_relation["relation"] = 100
             youtube_relation["ingested"] = False
@@ -170,6 +174,10 @@ class ParteonProcessor(object):
         url = url.replace("?view_as=subscriber", " ")
         url = url.rstrip()
         return url.split(" ")[-1]
+
+    def _check_youtube_url(self, url):
+        r = requests.get(url, headers=self.headers)
+        return True if r.status_code == 404 else False
 
     def fetch(self):
         self.log.info('Making request to Patreon for daily creators export')
