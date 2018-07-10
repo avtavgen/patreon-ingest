@@ -119,6 +119,24 @@ class ParteonProcessor(object):
             count = response["meta"]["posts_count"]
         except KeyError:
             count = 0
+        try:
+            next = response["links"]["next"]
+        except KeyError:
+            next = None
+        if next:
+            while True:
+                response = self._make_request("https://" + next)
+                try:
+                    n_count = response["meta"]["posts_count"]
+                except KeyError:
+                    n_count = 0
+                count += n_count
+                try:
+                    next = response["links"]["next"]
+                except KeyError:
+                    next = None
+                if not next:
+                    break
         return count
 
     def _get_user_relations(self, user_data, src_uri):
@@ -176,6 +194,7 @@ class ParteonProcessor(object):
         url = url.replace("/", " ")
         url = url.replace("?ref=ts", " ")
         url = url.replace("?ref=hl", " ")
+        url = url.replace("?ref=page_internal", " ")
         url = url.replace("?view_as=subscriber", " ")
         url = url.rstrip()
         return url.split(" ")[-1]
