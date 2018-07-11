@@ -13,5 +13,5 @@ if __name__ == "__main__":
     ingest_log.info('Starting job')
 
     ingest_log.info('Fetching patreon user data')
-    entity = SocialStatements(ingest_log, ska.engine) #, ska.engine
+    entity = SocialStatements(ingest_log, ska.engine) #,ska.engine
     processor = ParteonProcessor(entity, ingest_log).fetch()
